@@ -1,11 +1,10 @@
 package com.example.tallerinventario.ui.producto
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tallerinventario.data.local.AppDatabase
-import com.example.tallerinventario.data.local.ProductoEntity
 import com.example.tallerinventario.data.repository.ProductoRepository
+import com.example.tallerinventario.model.EstadoStock
+import com.example.tallerinventario.model.Producto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,9 +17,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ProductoViewModel(app: Application) : AndroidViewModel(app) {
-
-    private val repository = ProductoRepository(AppDatabase.getDatabase(app).productoDao())
+/**
+ * ViewModel de productos. Solo conoce el Repository y el modelo Producto:
+ * no sabe nada de Room, del DAO, de Context ni de Compose.
+ */
+class ProductoViewModel(
+    private val repository: ProductoRepository
+) : ViewModel() {
 
     // ---------------------------- LISTA ----------------------------
     private val _busqueda = MutableStateFlow("")
@@ -46,8 +49,8 @@ class ProductoViewModel(app: Application) : AndroidViewModel(app) {
         .map { lista ->
             ResumenInventario(
                 total = lista.size,
-                stockBajo = lista.count { it.estadoStock() == EstadoStock.STOCK_BAJO },
-                agotados = lista.count { it.estadoStock() == EstadoStock.AGOTADO }
+                stockBajo = lista.count { it.estadoStock == EstadoStock.STOCK_BAJO },
+                agotados = lista.count { it.estadoStock == EstadoStock.AGOTADO }
             )
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ResumenInventario())
@@ -69,8 +72,7 @@ class ProductoViewModel(app: Application) : AndroidViewModel(app) {
     private val _formState = MutableStateFlow(ProductoUiState())
     val formState: StateFlow<ProductoUiState> = _formState.asStateFlow()
 
-    /** Prepara el formulario: id > 0 = editar ese producto; id = 0 = producto nuevo
-     *  (opcionalmente con el código ya escrito, p. ej. leído desde un QR). */
+    /** id > 0 = editar ese producto; id = 0 = producto nuevo (opcionalmente con código ya escrito). */
     fun iniciarFormulario(id: Long = 0L, codigo: String = "") {
         if (id > 0) {
             _formState.value = ProductoUiState(id = id)
@@ -101,7 +103,7 @@ class ProductoViewModel(app: Application) : AndroidViewModel(app) {
     fun onStockMinimoChange(valor: String) =
         _formState.update { it.copy(stockMinimo = valor, stockMinimoError = null, errorGeneral = null) }
 
-    /** Valida y guarda en Room. La UI solo observa guardadoExitosamente para volver atrás. */
+    /** Valida y guarda. La UI solo observa guardadoExitosamente para volver atrás. */
     fun guardar() {
         if (_formState.value.guardando) return
         if (!validar()) return
@@ -119,7 +121,7 @@ class ProductoViewModel(app: Application) : AndroidViewModel(app) {
             }
             try {
                 repository.guardar(
-                    ProductoEntity(
+                    Producto(
                         id = s.id,
                         codigo = codigo,
                         nombre = s.nombre.trim(),
@@ -178,7 +180,7 @@ class ProductoViewModel(app: Application) : AndroidViewModel(app) {
         return null
     }
 
-    private fun ProductoEntity.toUiState() = ProductoUiState(
+    private fun Producto.toUiState() = ProductoUiState(
         id = id,
         codigo = codigo,
         nombre = nombre,

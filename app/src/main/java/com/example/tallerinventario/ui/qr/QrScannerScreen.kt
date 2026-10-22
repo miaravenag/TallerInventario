@@ -41,9 +41,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.example.tallerinventario.data.local.ProductoEntity
+import com.example.tallerinventario.model.Producto
 import com.example.tallerinventario.ui.producto.EstadoStockBadge
-import com.example.tallerinventario.ui.producto.estadoStock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,7 +155,7 @@ fun QrScannerScreen(
 
 @Composable
 private fun ResultadoProducto(
-    producto: ProductoEntity,
+    producto: Producto,
     onEditar: () -> Unit,
     onOtro: () -> Unit
 ) {
@@ -168,7 +167,7 @@ private fun ResultadoProducto(
             Text("Cantidad disponible: ${producto.cantidad}")
             Text("Existencia mínima: ${producto.stockMinimo}")
             Spacer(Modifier.height(4.dp))
-            EstadoStockBadge(producto.estadoStock())
+            EstadoStockBadge(producto.estadoStock)
         }
     }
     Button(onClick = onEditar, modifier = Modifier.fillMaxWidth()) { Text("Ver / editar producto") }

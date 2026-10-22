@@ -15,19 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.tallerinventario.data.local.ProductoEntity
-
-enum class EstadoStock(val etiqueta: String) {
-    DISPONIBLE("Disponible"),
-    STOCK_BAJO("Stock bajo"),
-    AGOTADO("Agotado")
-}
-
-fun ProductoEntity.estadoStock(): EstadoStock = when {
-    cantidad == 0 -> EstadoStock.AGOTADO
-    cantidad <= stockMinimo -> EstadoStock.STOCK_BAJO
-    else -> EstadoStock.DISPONIBLE
-}
+import com.example.tallerinventario.model.EstadoStock
 
 /** Icono + texto (no depende solo del color, como pide el caso en accesibilidad). */
 @Composable

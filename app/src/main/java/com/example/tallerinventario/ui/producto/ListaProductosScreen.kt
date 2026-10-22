@@ -49,7 +49,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.tallerinventario.data.local.ProductoEntity
+import com.example.tallerinventario.model.EstadoStock
+import com.example.tallerinventario.model.Producto
 import com.example.tallerinventario.ui.theme.appTopBarColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -184,8 +185,8 @@ private fun EstadoVacio(sinNingunProducto: Boolean, onCargarEjemplos: () -> Unit
 }
 
 @Composable
-private fun ProductoItem(producto: ProductoEntity, onClick: () -> Unit) {
-    val estado = producto.estadoStock()
+private fun ProductoItem(producto: Producto, onClick: () -> Unit) {
+    val estado = producto.estadoStock
     val (fondo, texto) = when (estado) {
         EstadoStock.DISPONIBLE ->
             MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer

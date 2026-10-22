@@ -1,10 +1,14 @@
 package com.example.tallerinventario.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tallerinventario.di.AppContainer
+import com.example.tallerinventario.di.AppViewModelFactory
 import com.example.tallerinventario.ui.login.LoginScreen
 import com.example.tallerinventario.ui.login.LoginViewModel
 import com.example.tallerinventario.ui.menu.MenuScreen
@@ -26,10 +30,14 @@ object Rutas {
 fun AppNavigation() {
     val navController = rememberNavController()
 
+    // Raíz de composición: aquí se arma Room + repositorios y se entregan a los ViewModels
+    val context = LocalContext.current.applicationContext
+    val factory = remember { AppViewModelFactory(AppContainer(context)) }
+
     // ViewModels creados una sola vez y compartidos entre las pantallas
-    val loginViewModel: LoginViewModel = viewModel()
-    val productoViewModel: ProductoViewModel = viewModel()
-    val qrViewModel: QrViewModel = viewModel()
+    val loginViewModel: LoginViewModel = viewModel(factory = factory)
+    val productoViewModel: ProductoViewModel = viewModel(factory = factory)
+    val qrViewModel: QrViewModel = viewModel(factory = factory)
 
     NavHost(navController = navController, startDestination = Rutas.LOGIN) {
 

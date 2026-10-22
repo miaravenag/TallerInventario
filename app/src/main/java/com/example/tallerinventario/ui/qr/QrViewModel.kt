@@ -1,11 +1,9 @@
 package com.example.tallerinventario.ui.qr
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tallerinventario.data.local.AppDatabase
-import com.example.tallerinventario.data.local.ProductoEntity
 import com.example.tallerinventario.data.repository.ProductoRepository
+import com.example.tallerinventario.model.Producto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,12 +14,12 @@ data class QrUiState(
     val escaneando: Boolean = true,
     val buscando: Boolean = false,
     val codigoLeido: String? = null,
-    val producto: ProductoEntity? = null   // null + buscando=false + codigoLeido!=null => no registrado
+    val producto: Producto? = null   // null + buscando=false + codigoLeido!=null => no registrado
 )
 
-class QrViewModel(app: Application) : AndroidViewModel(app) {
-
-    private val repository = ProductoRepository(AppDatabase.getDatabase(app).productoDao())
+class QrViewModel(
+    private val repository: ProductoRepository
+) : ViewModel() {
 
     private val _estado = MutableStateFlow(QrUiState())
     val estado: StateFlow<QrUiState> = _estado.asStateFlow()

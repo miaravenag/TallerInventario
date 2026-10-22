@@ -2,21 +2,27 @@ package com.example.tallerinventario.data.repository
 
 import com.example.tallerinventario.data.local.DatosEjemplo
 import com.example.tallerinventario.data.local.ProductoDao
-import com.example.tallerinventario.data.local.ProductoEntity
+import com.example.tallerinventario.data.local.toEntity
+import com.example.tallerinventario.data.local.toModel
+import com.example.tallerinventario.model.Producto
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Única puerta de acceso a los datos de productos.
- * El ViewModel NO conoce el DAO ni Room: solo habla con este repositorio.
+ * Convierte ProductoEntity (Room) <-> Producto (modelo): el resto de la app
+ * nunca ve clases de Room.
  */
 class ProductoRepository(private val dao: ProductoDao) {
 
-    fun observarProductos(texto: String): Flow<List<ProductoEntity>> =
-        if (texto.isBlank()) dao.observarTodos() else dao.buscar(texto.trim())
+    fun observarProductos(texto: String): Flow<List<Producto>> {
+        val origen = if (texto.isBlank()) dao.observarTodos() else dao.buscar(texto.trim())
+        return origen.map { lista -> lista.map { it.toModel() } }
+    }
 
-    suspend fun obtenerPorId(id: Long): ProductoEntity? = dao.obtenerPorId(id)
+    suspend fun obtenerPorId(id: Long): Producto? = dao.obtenerPorId(id)?.toModel()
 
-    suspend fun obtenerPorCodigo(codigo: String): ProductoEntity? = dao.obtenerPorCodigo(codigo)
+    suspend fun obtenerPorCodigo(codigo: String): Producto? = dao.obtenerPorCodigo(codigo)?.toModel()
 
     /** true si ya existe OTRO producto (distinto a idActual) con ese código. */
     suspend fun existeCodigo(codigo: String, idActual: Long): Boolean {
@@ -25,8 +31,9 @@ class ProductoRepository(private val dao: ProductoDao) {
     }
 
     /** Inserta si es nuevo (id = 0) o actualiza si ya existe. */
-    suspend fun guardar(producto: ProductoEntity) {
-        if (producto.id == 0L) dao.insertar(producto) else dao.actualizar(producto)
+    suspend fun guardar(producto: Producto) {
+        val entidad = producto.toEntity()
+        if (entidad.id == 0L) dao.insertar(entidad) else dao.actualizar(entidad)
     }
 
     suspend fun eliminar(id: Long) = dao.eliminarPorId(id)

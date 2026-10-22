@@ -1,6 +1,7 @@
 package com.example.tallerinventario.ui.producto
 
-import com.example.tallerinventario.data.local.ProductoEntity
+import com.example.tallerinventario.model.EstadoStock
+import com.example.tallerinventario.model.Producto
 
 /** Estado del FORMULARIO de producto (registrar / editar). Los números van como String
  *  porque es lo que escribe el usuario; el ViewModel los valida y convierte. */
@@ -31,16 +32,16 @@ enum class FiltroStock(val etiqueta: String) {
     STOCK_BAJO("Stock bajo"),
     AGOTADOS("Agotados");
 
-    fun acepta(p: ProductoEntity): Boolean = when (this) {
+    fun acepta(p: Producto): Boolean = when (this) {
         TODOS -> true
-        STOCK_BAJO -> p.estadoStock() == EstadoStock.STOCK_BAJO
-        AGOTADOS -> p.estadoStock() == EstadoStock.AGOTADO
+        STOCK_BAJO -> p.estadoStock == EstadoStock.STOCK_BAJO
+        AGOTADOS -> p.estadoStock == EstadoStock.AGOTADO
     }
 }
 
 /** Estado de la LISTA de productos. */
 data class ProductoListaUiState(
-    val productos: List<ProductoEntity> = emptyList(),
+    val productos: List<Producto> = emptyList(),
     val busqueda: String = "",
     val filtro: FiltroStock = FiltroStock.TODOS,
     val cargando: Boolean = true

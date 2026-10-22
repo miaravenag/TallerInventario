@@ -16,9 +16,9 @@ data class LoginUiState(
     val loginExitoso: Boolean = false
 )
 
-class LoginViewModel : ViewModel() {
-
-    private val repository = AuthRepository()
+class LoginViewModel(
+    private val repository: AuthRepository
+) : ViewModel() {
 
     private val _estado = MutableStateFlow(LoginUiState())
     val estado: StateFlow<LoginUiState> = _estado.asStateFlow()
