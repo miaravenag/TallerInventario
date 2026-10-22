@@ -6,7 +6,6 @@ import com.example.tallerinventario.ui.login.LoginViewModel
 import com.example.tallerinventario.ui.producto.ProductoViewModel
 import com.example.tallerinventario.ui.qr.QrViewModel
 
-/** Crea los ViewModels entregándoles sus repositorios. */
 class AppViewModelFactory(private val container: AppContainer) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")

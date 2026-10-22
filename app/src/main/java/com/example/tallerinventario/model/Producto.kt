@@ -6,10 +6,6 @@ enum class EstadoStock(val etiqueta: String) {
     AGOTADO("Agotado")
 }
 
-/**
- * Modelo de dominio. Es Kotlin puro: NO conoce Room, Compose ni Android.
- * La UI y el ViewModel trabajan solo con esta clase (nunca con ProductoEntity).
- */
 data class Producto(
     val id: Long = 0,
     val codigo: String,

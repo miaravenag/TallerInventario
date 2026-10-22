@@ -3,8 +3,6 @@ package com.example.tallerinventario.ui.producto
 import com.example.tallerinventario.model.EstadoStock
 import com.example.tallerinventario.model.Producto
 
-/** Estado del FORMULARIO de producto (registrar / editar). Los números van como String
- *  porque es lo que escribe el usuario; el ViewModel los valida y convierte. */
 data class ProductoUiState(
     val id: Long = 0,
     val codigo: String = "",

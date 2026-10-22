@@ -17,10 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel de productos. Solo conoce el Repository y el modelo Producto:
- * no sabe nada de Room, del DAO, de Context ni de Compose.
- */
+
 class ProductoViewModel(
     private val repository: ProductoRepository
 ) : ViewModel() {

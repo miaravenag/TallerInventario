@@ -1,6 +1,6 @@
 package com.example.tallerinventario.data.local
 
-/** Productos FICTICIOS para pruebas y demostración (sin datos reales). */
+/** Productos FICTICIOS para pruebas y demostración */
 object DatosEjemplo {
     val productos = listOf(
         ProductoEntity(codigo = "ACE-001", nombre = "Aceite motor 5W-30 1L", categoria = "Lubricantes", cantidad = 24, stockMinimo = 10),

@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.tallerinventario.model.EstadoStock
 
-/** Icono + texto (no depende solo del color, como pide el caso en accesibilidad). */
 @Composable
 fun EstadoStockBadge(estado: EstadoStock) {
     val (icono, color) = when (estado) {
