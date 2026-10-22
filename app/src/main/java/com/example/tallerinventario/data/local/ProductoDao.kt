@@ -2,6 +2,7 @@ package com.example.tallerinventario.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,9 @@ interface ProductoDao {
 
     @Insert
     suspend fun insertar(producto: ProductoEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertarTodos(productos: List<ProductoEntity>)
 
     @Update
     suspend fun actualizar(producto: ProductoEntity)

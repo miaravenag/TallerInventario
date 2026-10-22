@@ -25,9 +25,30 @@ data class ProductoUiState(
     val esEdicion: Boolean get() = id != 0L
 }
 
+/** Filtros rápidos de la lista. */
+enum class FiltroStock(val etiqueta: String) {
+    TODOS("Todos"),
+    STOCK_BAJO("Stock bajo"),
+    AGOTADOS("Agotados");
+
+    fun acepta(p: ProductoEntity): Boolean = when (this) {
+        TODOS -> true
+        STOCK_BAJO -> p.estadoStock() == EstadoStock.STOCK_BAJO
+        AGOTADOS -> p.estadoStock() == EstadoStock.AGOTADO
+    }
+}
+
 /** Estado de la LISTA de productos. */
 data class ProductoListaUiState(
     val productos: List<ProductoEntity> = emptyList(),
     val busqueda: String = "",
+    val filtro: FiltroStock = FiltroStock.TODOS,
     val cargando: Boolean = true
+)
+
+/** Totales mostrados en el menú. */
+data class ResumenInventario(
+    val total: Int = 0,
+    val stockBajo: Int = 0,
+    val agotados: Int = 0
 )

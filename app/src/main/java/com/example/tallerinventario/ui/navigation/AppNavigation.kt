@@ -46,6 +46,7 @@ fun AppNavigation() {
 
         composable(Rutas.MENU) {
             MenuScreen(
+                viewModel = productoViewModel,
                 onProductos = { navController.navigate(Rutas.LISTA) },
                 onEscanearQr = {
                     qrViewModel.reiniciar()

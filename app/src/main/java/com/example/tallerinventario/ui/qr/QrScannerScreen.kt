@@ -1,5 +1,6 @@
 package com.example.tallerinventario.ui.qr
 
+import com.example.tallerinventario.ui.theme.appTopBarColors
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -72,6 +73,7 @@ fun QrScannerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = appTopBarColors(),
                 title = { Text("Escanear código QR") },
                 navigationIcon = {
                     IconButton(onClick = onVolver) {

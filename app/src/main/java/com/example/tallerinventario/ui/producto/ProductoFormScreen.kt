@@ -1,5 +1,6 @@
 package com.example.tallerinventario.ui.producto
 
+import com.example.tallerinventario.ui.theme.appTopBarColors
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,6 +57,7 @@ fun ProductoFormScreen(
     Scaffold(
         topBar = {
             TopAppBar(
+                colors = appTopBarColors(),
                 title = { Text(if (estado.esEdicion) "Editar producto" else "Nuevo producto") },
                 navigationIcon = {
                     IconButton(onClick = onVolver) {

@@ -1,5 +1,6 @@
 package com.example.tallerinventario.data.repository
 
+import com.example.tallerinventario.data.local.DatosEjemplo
 import com.example.tallerinventario.data.local.ProductoDao
 import com.example.tallerinventario.data.local.ProductoEntity
 import kotlinx.coroutines.flow.Flow
@@ -29,4 +30,7 @@ class ProductoRepository(private val dao: ProductoDao) {
     }
 
     suspend fun eliminar(id: Long) = dao.eliminarPorId(id)
+
+    /** Inserta los productos ficticios (si el código ya existe, se ignora). */
+    suspend fun cargarEjemplos() = dao.insertarTodos(DatosEjemplo.productos)
 }

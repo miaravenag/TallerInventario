@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -23,18 +24,45 @@ class ProductoViewModel(app: Application) : AndroidViewModel(app) {
 
     // ---------------------------- LISTA ----------------------------
     private val _busqueda = MutableStateFlow("")
+    private val _filtro = MutableStateFlow(FiltroStock.TODOS)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val listaState: StateFlow<ProductoListaUiState> = _busqueda
-        .flatMapLatest { texto ->
-            repository.observarProductos(texto).map { productos ->
-                ProductoListaUiState(productos = productos, busqueda = texto, cargando = false)
+    val listaState: StateFlow<ProductoListaUiState> =
+        combine(_busqueda, _filtro) { texto, filtro -> texto to filtro }
+            .flatMapLatest { (texto, filtro) ->
+                repository.observarProductos(texto).map { productos ->
+                    ProductoListaUiState(
+                        productos = productos.filter { filtro.acepta(it) },
+                        busqueda = texto,
+                        filtro = filtro,
+                        cargando = false
+                    )
+                }
             }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ProductoListaUiState())
+
+    /** Totales para el menú principal (se actualizan solos al cambiar la tabla). */
+    val resumen: StateFlow<ResumenInventario> = repository.observarProductos("")
+        .map { lista ->
+            ResumenInventario(
+                total = lista.size,
+                stockBajo = lista.count { it.estadoStock() == EstadoStock.STOCK_BAJO },
+                agotados = lista.count { it.estadoStock() == EstadoStock.AGOTADO }
+            )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ProductoListaUiState())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ResumenInventario())
 
     fun onBusquedaChange(texto: String) {
         _busqueda.value = texto
+    }
+
+    fun onFiltroChange(filtro: FiltroStock) {
+        _filtro.value = filtro
+    }
+
+    /** Carga productos ficticios para demostración. */
+    fun cargarEjemplos() {
+        viewModelScope.launch { repository.cargarEjemplos() }
     }
 
     // --------------------------- FORMULARIO ---------------------------
